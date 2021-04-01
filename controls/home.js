@@ -3,8 +3,9 @@ let func = require('../sql/func')
 module.exports = {
   login (req, res) {
     let val = ''
-    let name = req.query.name
-    let sql = `SELECT * FROM user Where passwd = '${req.query.password}' AND  name = '${name}'`
+    let openid = req.query.openid
+    console.log(req.body);
+    let sql = `SELECT * FROM user Where openid = '${openid}'`
     try {
       func.connPool(sql, val, (err, rows) => {
         if (rows[0]) {
@@ -16,7 +17,7 @@ module.exports = {
         } else {
           res.json({
             code: 201,
-            msg: 'log defeat'
+            msg: 'search FAILED'
           })
         }
       })
@@ -24,29 +25,73 @@ module.exports = {
       // console.log(e);
     }
   },
-  list (req, res) {
+  sign (req, res) {
     let val = ''
-    let name = req.query.type
-    let sql
-    if (name) {
-      sql = `SELECT * FROM goods Where type = '${name}'`
-    } else {
-      sql = `SELECT * FROM goods`
-    }
+    let {openid, name, avatar_url} = req.query
+    let sql = `INSERT INTO user (openid, total_deal, total_pub, name, avatar_url) VALUES ("${openid}",0,0,"${name}","${avatar_url}")`
+    
     try {
       func.connPool(sql, val, (err, rows) => {
-        if (rows[0]) {
+         if(err) {
+          res.json({
+            code: 201,
+            msg: 'defealt',
+          })
+          
+         }else {
           res.json({
             code: 200,
             msg: 'success',
-            result: rows
           })
-        } else {
+          
+         }
+      })
+    } catch (e) {
+      // console.log(e);
+    }
+  },
+  search (req, res) {
+    let val = ''
+    let openid = req.query.openid
+    let sql = `SELECT * FROM user where openid="${openid}"`
+    
+    try {
+      func.connPool(sql, val, (err, rows) => {
+         if(rows[0]) {
+           res.json({
+             code:200,
+             data:rows[0]
+           })
+         }else {
           res.json({
-            code: 201,
-            msg: 'defeat'
+            code:201,
+            msg:'查询失败'
           })
-        }
+         }
+      })
+    } catch (e) {
+      // console.log(e);
+    }
+  },
+  saveInfo (req, res) {
+    let val = ''
+    
+    let {openid, name, avatar_url, contact_qq, contact_wx} = req.query
+    let sql = `UPDATE user SET total_deal=0, total_pub=0, name="${name}", avatar_url="${avatar_url}", contact_qq="${contact_qq}", contact_wx="${contact_wx}"  where openid="${openid}"`
+    
+    try {
+      func.connPool(sql, val, (err, rows) => {
+         if(rows) {
+           res.json({
+             code:200,
+             msg:'保存成功'
+           })
+         }else {
+          res.json({
+            code:201,
+            msg:'查询失败'
+          })
+         }
       })
     } catch (e) {
       // console.log(e);
