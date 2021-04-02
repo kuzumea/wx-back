@@ -9,7 +9,10 @@ module.exports = {
   // search
   search:`${path}/user/search`,
   // save
-  saveInfo:`${path}/user/saveInfo`
+  saveInfo:`${path}/user/saveInfo`,
+
+  // pub upload
+  upload:`${path}/pub/upload`
 
 
 }
