@@ -14,6 +14,20 @@ module.exports = {
       })
     })
   },
+  // promise 
+  proConPool (sql, val, cb) {
+    return new Promise((resolve,reject)=>{
+      pool.getConnection((err,conn)=>{
+        let q = conn.query(sql, val, (err,rows)=>{
+          if(err) {
+            reject(err)
+          }
+          cb(err,rows)
+          conn.release()
+        })
+      })
+    })
+  },
 
   connPoolArray (sql, val, cb) {
     pool.getConnection((err, conn) => {

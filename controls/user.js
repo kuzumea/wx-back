@@ -12,7 +12,6 @@ module.exports = {
           res.json({
             code: 200,
             msg: 'log success',
-            token: rows[0].token
           })
         } else {
           res.json({
